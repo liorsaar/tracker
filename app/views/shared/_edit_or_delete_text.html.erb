@@ -1,0 +1,21 @@
+
+<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteThing('" + thing + "," + thing.id + "');",
+            {:style => "float:right;"}) %>
+Name: <span id="edit_subcomponent_name<%= sub_counter.to_s %>" class="subcomponent_name"><%= subcomponent.name %></span>
+<div id="edit_subcomponent_name_link<%= sub_counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+<script type="text/javascript">
+new Ajax.InPlaceEditor("edit_subcomponent_name<%= sub_counter.to_s %>", "/supplements/content_editor_update_subcomponent?id=<%= subcomponent.id %>&field=name", { rows: 1, cols: 40, externalControl: "edit_supplement_name_link<%= sub_counter.to_s %>"});
+</script>
+
+<script>
+    function deleteThing(thing_type, thing_id)
+    {
+      new Ajax.Request('/diagnostics_content_editor/delete_thing?thing_id=' + thing_id + "&thing_type=" + thing_type);
+    }
+
+    function updateThing(thing_type, thing_id)
+    {
+        new Ajax.Request('/diagnostics_content_editor/update_thing?thing_id=' + thing_id + "&thing_type=" + thing_type);
+    }
+
+</script>

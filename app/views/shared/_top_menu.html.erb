@@ -1,0 +1,58 @@
+<ul>
+    <% params = request.path_parameters() %>
+    <% if params["controller"] == "home" %>
+	   <li><%= link_to('Home', {:controller => 'home'}, {:id => 'selected'}) %></li>
+    <% else %>
+	   <li><%= link_to('Home', {:controller => 'home'}) %></li>
+    <% end %>
+    <% if params["controller"] == "" %>
+	   <li><a id="selected" href="#">Jim's Dashboard</a></li>
+    <% else %>
+		<% if not session[:logged_in] %>
+   			<li><a href="#">Dashboard</a></li>
+		<% else %>
+			<% if session[:current_user].login == "admin" %>
+		   		<li><a href="#">Admin's Dashboard</a></li>
+			<% elsif session[:current_user].login == "johnk" %>
+			   	<li><a href="#">John's Dashboard</a></li>
+			<% elsif session[:current_user].login == "moniquej" %>
+				<li><a href="#">Monique's Dashboard</a></li>
+			<% elsif session[:current_user].login == "brazf" %>
+				<li><a href="#">Braz's Dashboard</a></li>
+			<% else %>
+		   		<li><a href="#">Jim's Dashboard</a></li>
+			<% end %>
+		<% end %>
+    <% end %>
+    <% if params["controller"] == "supplements" %>
+	   <li><a id="selected" href="/supplements">Supplement Tracker</a></li>
+    <% else %>
+	   <li><a href="/supplements">Supplement Tracker</a></li>
+    <% end %>
+    <% if params["controller"] == "" %>
+	   <li><a id="selected" href="#">Diagnostic Tracker</a></li>
+    <% else %>
+	   <li><a href="#">Diagnostic Tracker</a></li>
+    <% end %>
+    <% if params["controller"] == "" %>
+	   <li><a id="selected" href="#">Health Expenses</a></li>
+    <% else %>
+	   <li><a href="#">Health Expenses</a></li>
+    <% end %>
+    <% if params["controller"] == "community" %>
+	   <li><a id="selected" href="/community">Community</a></li>
+    <% else %>
+	   <li><a href="/community">Community</a></li>
+    <% end %>
+    <% if params["controller"] == "practitioners" %>
+	   <li><a id="selected" href="/practitioners">Practitioners</a></li>
+    <% else %>
+	   <li><a href="/practitioners">Practitioners</a></li>
+    <% end %>
+</ul>
+
+
+
+
+
+

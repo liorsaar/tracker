@@ -1,0 +1,10 @@
+<div class="tab_navigation horizontal_tab_navigation" style="position:relative;margin-bottom:20px;">
+	<ul>
+    	<% @tabs.each do |name, link| %>
+    		<%= content_tag :li,
+                     link_to(name, {:action => link}, @main_tab == link ? {:class => "selected"} : {}),
+                     :id => "#{name.to_s.downcase}-tab" %>
+    	<% end %>
+	</ul>
+</div>
+<hr/>

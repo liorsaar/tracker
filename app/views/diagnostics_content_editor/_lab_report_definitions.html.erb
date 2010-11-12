@@ -1,0 +1,30 @@
+<h1 style="color:red;">STILL UNDER CONSTRUCTION</h1>
+<h1>Create a New Lab Report Definition</h1>
+<% semantic_form_for :lab_report_definition, LabReportDefinition.new, :url => 'lab_report_definitions' do |form| %>
+	<%= form.inputs %>
+	<%= form.buttons %>
+<% end %>
+<div>
+	<% lab_report_definition_counter = 0 -%>
+	<% @lab_report_definitions.each do | lab_report_definition | -%>
+    	<div>
+			<hr/>
+			<h1>Edit an Existing Lab Report Definition</h1>
+        	<span class='image_links'>
+        		<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteLabReportDefinition('" + lab_report_definition.id.to_s + "');", {:style => "float:right;"}) %>
+          	</span>
+          	<% semantic_form_for :lab_report_definition, lab_report_definition, :url => 'update_lab_report_definition' do |form| %>
+				<%= form.inputs %>
+				<%= form.buttons %>
+				<%= form.hidden_field :id, :value => lab_report_definition.id %>
+			<% end %>
+      	</div>
+		<% lab_report_definition_counter += 1 -%>
+	<% end -%>
+</div>
+<script>
+  function deleteLabReportDefinition(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_lab_report_definition?id=' + id);
+  }
+</script>

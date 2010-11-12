@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  substance_id: 1
+  has_reference_amount: 1
+  has_reference_low: 1
+  has_reference_high: 1
+  test_category_id: 1
+  test_subcategory_id: 1
+
+two:
+  substance_id: 1
+  has_reference_amount: 1
+  has_reference_low: 1
+  has_reference_high: 1
+  test_category_id: 1
+  test_subcategory_id: 1

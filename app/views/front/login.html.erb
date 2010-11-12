@@ -1,0 +1,14 @@
+<div style="height:100%;color:white;background-color:#47e; border:1px solid #027;padding: 50px;">
+	<h1 style="font-size:400%;">Login</h1>
+	<% form_tag do %>
+		<p>
+			<label for="login">Username</label><br/>
+			<%= text_field_tag 'login' %><br/>
+		</p>
+		<p>
+			<label for="password">Password</label><br/>
+			<%= password_field_tag 'password' %><br/>
+		</p>
+	    <p><%= submit_tag 'Log in' %></p>
+	<% end %>
+</div>

@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+      <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+      <%= stylesheet_link_tag 'application' %>
+      <%= stylesheet_link_tag 'mbContainer' %>
+      <%= javascript_include_tag :defaults %>
+      <%= stylesheet_link_tag "http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" %>
+      <%= stylesheet_link_tag "http://yui.yahooapis.com/2.7.0/build/base/base.css" %>
+       <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+	    <%= javascript_include_tag 'jquery.flot.js' %>
+	    <%= javascript_include_tag 'jquery.cookie.js' %>
+	    <%= javascript_include_tag 'jquery.metadata.js' %>
+	    <%= javascript_include_tag 'mbContainer.js' %>
+      <script>
+          // stop jquery from conflicting with prototype by
+          // renaming it to $J() instead of just $()
+          jQuery.noConflict();
+          $J = jQuery;
+      </script>
+    </head>
+
+    <body>
+        <map name="map1">
+			<% if session[:current_user] != nil and session[:current_user].super_user? %>
+		    	<area href="/diagnostics_content_editor" shape="rect" coords="725,8,827,22"></area>
+			<% end %>
+		    <area href="/front/logout" shape="rect" coords="975,8,1020,22"></area>
+		    <area href="/dashboard" shape="rect" coords="30,100,181,140"></area>
+	        <area href="/supplements" shape="rect" coords="183,100,350,140"></area>
+	        <area href="/diagnostic_tracker" shape="rect" coords="352,100,527,140"></area>
+	        <area href="/health_expenses" shape="rect" coords="529,100,680,140"></area>
+	        <area href="/community" shape="rect" coords="682,100,815,140"></area>
+	        <area href="/practitioners" shape="rect" coords="817,100,992,140"></area>
+        </map>
+        
+        <% if flash[:notice] %>
+            <div class="flash"><%= flash[:notice] %></div>
+        <% end %>
+        <div style="position:relative;">
+            <%= yield  %>
+        </div>
+    </body>
+</html>
+
+<script>
+	function close_modal(){  
+
+	    //hide the mask  
+	    $J('#mask').fadeOut(500);  
+
+	    //hide modal window(s)  
+	    $J('.modal_window').fadeOut(500);  
+
+	}  
+
+	function show_modal(modal_id){  
+
+	    //set display to block and opacity to 0 so we can use fadeTo  
+	    //$J('#mask').css({ 'display' : 'block', opacity : 0});  
+
+	    //fade in the mask to opacity 0.8  
+	    //$J('#mask').fadeTo(500,0.8);  
+
+	     //show the modal window  
+		
+		if(modal_id == 'trend_analysis')
+		{
+			drawGraph();
+		}
+	    $J('#'+modal_id).fadeIn(500);  
+
+	}
+	
+	$J(document).ready(function(){  
+
+	//get the height and width of the page  
+	var window_width = $J(window).width();  
+	var window_height = $J(window).height();  
+	//alert("window_width:" + window_width + " window_height:" + window_height);
+	//vertical and horizontal centering of modal window(s)  
+	/*we will use each function so if we have more then 1 
+	modal window we center them all*/  
+	$J('.modal_window').each(function(){  
+/*
+	    //get the height and width of the modal  
+	    var modal_height = $J(this).outerHeight();  
+	    var modal_width = $J(this).outerWidth();  
+		//alert("modal_width:" + modal_width + " modal_height:" + modal_height);
+	    //calculate top and left offset needed for centering  
+	    var top = (window_height-modal_height)/2;  
+	    var left = (window_width-modal_width)/2;  
+
+	    //apply new top and left css values  
+	    $J(this).css({'top' : top , 'left' : left});  
+*/
+	});  
+
+	    $J('.activate_modal').click(function(){  
+
+	          //get the id of the modal window stored in the name of the activating element  
+	          var modal_id = $J(this).attr('name');  
+
+	          //use the function to show it  
+	          show_modal(modal_id);  
+
+	    });  
+
+	    $J('.close_modal').click(function(){  
+
+	        //use the function to close it  
+	        close_modal();  
+
+	    });  
+
+	});
+</script>

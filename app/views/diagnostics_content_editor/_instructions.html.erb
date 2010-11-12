@@ -1,0 +1,32 @@
+<h1>Instructions</h1>
+<h2>General Terms</h2>
+<p>
+A Lab Report is a collection of Single Test Results.  Single Test Results must have an associated Lab Report.  It's okay if there is only one Single Test Result in a Lab Report.  Both of these conform to their respective definitions: Lab Report Definition and Single Test Definition.  Both of these definitions also have a corresponding Type field, which allows grouping of similar tests and reports for trend analysis.  (note that the Single Test Type field is not implemented yet...)		
+</p>
+<p>
+	Some Report Providers aggregate tests from individual Labs.  Currently a Lab Report Definition belongs to a Report Provider and a Single Test Definition belongs to a Lab.
+</p>
+<p>
+Customers are based on users, but there will be other kinds of users, so they are not the same thing.  Lab Reports belong to Customers.  We currently do not have a UI for creating Users.  Users are populated into the database in code.	Until we have a way to create new Users, Customers are confined to existing Users.
+</p>
+<h2>Still Under Construction</h2>
+<p>
+	At this point Single Test Results can be entered for the purpose of testing the Diagnostic Tracker UI.  Lab Reports can be created in a nominal way just to be able to connect the Test Results to a Customer.  Many content editor screens are under construction, but are still useful in a limited way to support the process of creating Single Test Results.
+</p>
+<h2>Instructions for entering a Single Test Result</h2>
+<ol>
+	<li>If any of the tests in the report are other than Blood, Hair, or Urine, create a new Test Vehicle</li>
+	<li>Enter any new Units of Measure</li>
+	<li>Enter any new Substances</li>
+	<li>Create the Customer (if they aren't already created)</li>
+	<li>Create Labs as needed</li>
+	<li>Create a Report Provider if needed</li>
+	<li>Create a Lab Report Type if needed</li>
+	<li>Create a Lab Report Definition.  For now, you only need to populate the Test Vehicle, Report Type and Report Provider fields.  The others can be left blank.</li>
+	<li>Create a Single Test Definition.  There are three fields related to Reference Ranges.  We may never use one of them, Reference Amount.  To get an actual range (e.g. 0-60), enter both a lower and an upper limit.  To get a threshold, enter one or the other.</li>
+	<li>Create the Single Test Result (whew!)</li>
+</ol>
+<h2>Instructions for entering a Lab Report</h2>
+<p>
+	Under Construction
+</p>

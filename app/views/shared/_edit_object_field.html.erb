@@ -1,0 +1,6 @@
+<% link_root = object.class.name.downcase + field + counter.to_s -%>
+<%= field.capitalize -%>: <span id="edit_<%= link_root -%>"><%= object[field] %></span>
+<div id="edit_<%= link_root -%>_link" style="display:inline;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+<script type="text/javascript">
+    new Ajax.InPlaceEditor("edit_<%= link_root -%>", "/<%= controller.controller_name %>/update?object=<%= object.class.name -%>&id=<%= object.id %>&field=<%= field -%>&redraw=<%= redraw %>", { rows: 1, cols: 40, externalControl: "edit_<%= link_root -%>_link"});
+</script>

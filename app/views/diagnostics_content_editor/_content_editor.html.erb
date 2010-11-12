@@ -1,0 +1,77 @@
+<style>
+	#certifiers{background-color:#aac;border:1px solid #333;}
+	#experts{background-color:#bff;border:1px solid #333;}
+	.supplement{border: solid 1px #555;background-color:#eee;color:#444;margin: 2px;padding: 20px;}
+	.supplement a{color:#eee;}
+	.supplement_name{display:inline;}
+	.ingredient{border: solid 1px #522;background-color:#caa;color:#633;margin: 2px;padding: 5px;}
+	.ingredient a{color:#caa;}
+	.thresholds{background-color:#aca;}
+	.alerts{background-color:#aa6;border:1px solid #333;}
+	.info{background-color:#ffa;border:1px solid #333;}
+	.certifications{background-color:#aaf;border:1px solid #333;}
+    .tab_navigation ul
+    {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    text-align: center;
+    }
+
+    .tab_navigation ul li
+    {
+        list-style-type: none;
+    }
+
+    .horizontal_tab_navigation ul li
+    {
+        display: inline;
+    }
+
+    .vertical_tab_navigation ul li
+    {
+        width: 120px;
+        border:1px solid #147;
+    }
+
+    .tab_navigation ul li a
+    {
+    text-decoration: none;
+    padding: .2em 1em;
+    color: #eee;
+    background-color: #369;
+        border:1px solid #036;
+    }
+
+    .vertical_tab_navigation ul li a
+    {
+        display:block;
+        width: 120px;
+        padding:0;
+    }
+
+    .tab_navigation ul li a:hover
+    {
+    color: #fff;
+    background-color: #58B;
+    }
+
+    .tab_navigation ul li .selected
+    {
+    color: #036;
+    background-color: #fff;
+    }
+</style>
+<div id="content_edit_box" class="content_edit_body">
+<h1>Diagnostics Content Editor</h1>
+	<% if flash[:notice] %>
+		<div class="notice"><%= flash[:notice] %></div>
+	<% end %>
+	<%= link_to 'Back to Diagnostic Tracker', :controller => 'diagnostic_tracker', :action => 'index' %>	
+	<br/>
+	<br/>
+    <%= render :partial => 'shared/horizontal_sub_tabs' %>
+    <div id="sub_tab">
+        <%= render :partial => @main_tab -%>
+    </div>
+</div>

@@ -1,0 +1,6 @@
+<div id="certifications_window<%= supplement_id %>" class='modal_window close_modal'>
+	<% certifications.each do | certification | %>
+		<%= image_tag('/images/certified.jpg') %>
+		<%= Certifier.find(certification.certifier_id).name %><br/>
+	<% end %>
+</div>

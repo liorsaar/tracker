@@ -1,0 +1,15 @@
+<div id="info_window<%= info.id %>" class='modal_window close_modal'>
+	<% if info != nil %>
+		<%= info.paragraph1 %>
+		<% if info.number_of_paragraphs.to_i > 1 %>
+			<br/><br/><%= info.paragraph2 %>
+			<% if info.number_of_paragraphs.to_i > 2 %>
+				<br/><br/><%= info.paragraph3 %>
+				<% if info.number_of_paragraphs.to_i > 3 %>
+					<br/><br/><%= info.paragraph4 %>
+				<% end %>
+			<% end %>
+		<% end %>
+	<% end %>
+</div>  
+

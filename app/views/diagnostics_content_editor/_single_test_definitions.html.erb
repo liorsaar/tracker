@@ -1,0 +1,27 @@
+<% semantic_form_for :single_test_definition, SingleTestDefinition.new, :url => 'single_test_definitions' do |form| %>
+	<%= form.inputs %>
+	<%= form.buttons %>
+<% end %>
+<div>
+	<% single_test_definition_counter = 0 -%>
+	<% @single_test_definitions.each do | single_test_definition | -%>
+    	<div>
+			<hr/>
+        	<span class='image_links'>
+        		<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteSingleTestDefinition('" + single_test_definition.id.to_s + "');", {:style => "float:right;"}) %>
+          	</span>
+          	<% semantic_form_for :single_test_definition, single_test_definition, :url => 'update_single_test_definition' do |form| %>
+				<%= form.inputs %>
+				<%= form.buttons %>
+				<%= form.hidden_field :id, :value => single_test_definition.id %>
+			<% end %>
+      	</div>
+		<% single_test_definition_counter += 1 -%>
+  	<% end -%>
+</div>
+<script>
+  function deleteSingleTestDefinition(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_single_test_definition?id=' + id);
+  }
+</script>

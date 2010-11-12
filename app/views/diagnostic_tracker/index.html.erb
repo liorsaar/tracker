@@ -1,0 +1,348 @@
+<style>
+.checklist {
+	text-align:left;
+}
+
+.prior {
+	text-align:left;
+	background-color:#ddd;
+	color:#666;
+}
+
+tr.checklist:hover { background: #aaa;}
+tr.prior:hover { background: #aaa;}
+
+.totals_row
+{
+	position:absolute;
+	top:547px;
+	width:205px;
+	color:#444;
+	background-color:#DCEDD6;
+	padding:5px;
+}
+
+.totals_row_left
+{	
+	left:56px;	
+	border-right:1px solid #B2B4A0;
+}
+
+.totals_row_middle
+{
+	left:272px;	
+	border-right:1px solid #B2B4A0;
+}
+
+.totals_row_right
+{
+	left:488px;
+}
+
+.breadcrumb
+{
+	position:absolute;
+	left:30px;
+	top:120px;
+	width:380px;
+	height:26px;
+	font-family:'Times New Roman', Times, serif;
+	font-size:150%;
+	color:#3199cb;
+}
+
+.test_results_label
+{
+	position:absolute;
+	left:56px;
+	top:245px;
+	width:644px;
+	height:280px;
+	text-align:left;
+	color:#393;
+	font-family:'Times New Roman', Times, serif;
+	font-size:120%;
+}
+table{border-collapse:collapse;text-align: center; width:100%; border-color:#ccc; font-size:85%;}
+td{text-align: center;border: 1px solid #fff;padding:1px; color:#666;}
+th{padding:0 20px;border: 1px solid #fff; color:#444;}
+.odd
+{
+	background-color:#eee;
+}
+</style>
+
+<% retest_counter = 0 %>
+<img src="/images/DiagnosticTrackerON_03.jpg" style="position:absolute;left:0px;top:0px;" usemap="#map1"/>
+<% if session[:logged_in] %>
+	<div class="breadcrumb">
+		<h2>Your Diagnostic Library</h2>
+	</div>
+	<div style="position:absolute;left:55px;top:200px;width:420px;height:36px;background-color:#e5f2f8;">
+	    <% remote_form_for(:expert, :url => {:action => 'change_expert'} ) do  |f| %>
+	        <span style="position:absolute;left:10px;top:6px;font-family:'Times New Roman', Times, serif;font-size:150%;color:#3199cb">
+	        Choose Range Expert </span>
+	        <span style="position:absolute;left:210px;top:10px;"><%= f.select(:id, Expert.find(:all).collect {|c| [ c.name, c.id ] }, {:selected => session[:expert_id], :include_blank => 'None'}) %></span>
+	        <span style="position:absolute;left:290px;top:5px;"><%= image_submit_tag '/images/SaveChanges.png' %></span>
+	    <% end %>
+	</div>
+	<div style="position:absolute;left:605px;top:210px;width:120px;height:36px;">
+		<%= radio_button_tag( :test_type, 'panel', true ) %> Panel Tests  
+	</div>
+	<div style="position:absolute;left:725px;top:210px;width:120px;height:36px;">
+		<%= radio_button_tag( :test_type, 'panel', false ) %> Physical Tests  
+	</div>
+	<div style="position:absolute;left:845px;top:210px;width:120px;height:36px;">
+		<%= radio_button_tag( :test_type, 'panel', false ) %> Genomic Tests  
+	</div>
+    <div class="test_results_label">
+		Latest Test Results (out of range)
+	</div>
+    <div id="out_of_range_list" style="position:absolute;left:56px;top:270px;width:644px;height:280px;border:1px solid#ccc;overflow-y:auto;">
+		<table id="out_of_range_table">
+		<form action="#" method="get">
+			<tr>
+				<th></th><th>Test Name</th><th>Result</th><th>Ref Range</th><th>Flag</th><th>Units</th><th>Date</th><th>Reschedule</th>
+			</tr>
+			<% table_row_counter = 0 -%>
+			<% oorid_counter = 0 -%>
+		    <% @out_of_range_test_ids.each do | oorid | -%>
+				<% single_test_result = SingleTestResult.find(oorid) -%>
+				<% definition = SingleTestDefinition.find(single_test_result.single_test_definition.id) -%>
+				<% uom = UnitOfMeasure.find(definition.unit_of_measure_id) -%>
+				<% substance_name = Substance.find(definition.substance_id).name -%>
+				<% class_concat = "checklist" %>
+				<% if table_row_counter % 2 == 1 %>
+					<% class_concat += " odd" %>
+				<% end %>
+				<tr class="<%= class_concat %>">
+					<label for="o1">
+						<td>
+							<% if session[:selected_tests] != nil and session[:selected_tests][definition.substance_id.to_s] == true %>
+								<input checked="checked" onclick='toggleTestResultSelected("<%= definition.substance_id %>")' id="o1" name="o1" type="checkbox" />
+							<% else %>
+								<input onclick='toggleTestResultSelected("<%= definition.substance_id %>")' id="o1" name="o1" type="checkbox" />
+							<% end %>
+						</td> 
+						<td><%= substance_name  %></td>
+						<td><%= single_test_result.result_amount %></td>						
+						<td><%= @out_of_range_ref_ranges[oorid_counter] %></td>
+						<td>
+							<% if @out_of_range_flags[oorid_counter] != 'OK' %>
+								<%= image_tag('/images/redflag.jpg') %>
+							<% else %>
+								<%= image_tag('/images/greenflag.jpg') %>
+							<% end %>
+							<%= @out_of_range_flags[oorid_counter] %>
+						</td>
+						<td><%= uom.name %></td>
+						<td><%= @out_of_range_dates[oorid_counter].strftime('%b %Y') %></td>
+						<td>
+							<% if definition.retest_interval < (Date.today - @out_of_range_dates[oorid_counter]).to_i / 30 %>
+								<% retest_counter += 1 %>
+								<%= image_tag('/images/RescheduleIcon.jpg') %>
+							<% end %>
+						</td>
+					</label>
+				</tr>
+				<% oorid_counter += 1 -%>
+				<% table_row_counter += 1 -%>
+			<% end -%>
+           
+			<% class_concat = "checklist" %>
+			<% if table_row_counter % 2 == 1 %>
+				<% class_concat += " odd" %>
+			<% end %>
+			<% table_row_counter += 1 -%>
+			
+		    <tr class="<%= class_concat %>"><label for="o2"><td colspan="8" style="color:#444;font-weight:bold;">Prior Results of out of range testing...</td></label>
+			</tr>
+			<% prior_counter = 0 -%>
+		    <% @prior_result_ids.each do | prior | -%>
+				<% single_test_result = SingleTestResult.find(prior) -%>
+				<% definition = SingleTestDefinition.find(single_test_result.single_test_definition.id) -%>
+				<% uom = UnitOfMeasure.find(definition.unit_of_measure_id) -%>
+				<% substance_name = Substance.find(definition.substance_id).name -%>
+				<% class_concat = "checklist" %>
+				<% if table_row_counter % 2 == 1 %>
+					<% class_concat += " odd" %>
+				<% end %>
+
+			    <tr class="<%= class_concat %>">
+					<label for="o2">
+						<td><input id="o2" name="o2" type="checkbox" /></td> 
+						<td><%= substance_name  %></td>
+						<td><%= single_test_result.result_amount %></td>						
+						<td><%= @prior_ref_ranges[prior_counter] %></td>
+						<td><%= @prior_flags[prior_counter] %></td>
+						<td><%= uom.name %></td>
+						<td><%= @prior_result_dates[prior_counter].strftime('%b %Y') %></td>
+						<td></td>
+					</label>
+				</tr>
+				<% prior_counter += 1 -%>
+				<% table_row_counter += 1 -%>
+			<% end -%>
+		</form>
+		</table>
+	</div>
+	<div class="totals_row totals_row_left">Total Tests = <%= @total_tests %></div>
+	<div class="totals_row totals_row_middle">Total Out of Range Tests = <%= @total_out_of_range_tests %></div>
+	<div class="totals_row totals_row_right">Need to Retest = <%= retest_counter %></div>
+	<% 	left_butt = 709
+		right_butt = 847
+		row_height = 60
+		row_1 = 250
+		row_2 = row_1 + row_height
+		row_3 = row_2 + row_height
+		row_4 = row_3 + row_height
+		row_5 = row_4 + row_height
+	-%>
+    <div title='Compare history of selected test(s)' style="position:absolute;left:<%= left_butt %>px;top:<%= row_1 %>px;">
+		<a class='activate_modal' name='trend_analysis' href='#'><%= image_tag('/images/TrendAnalysisButtonON.jpg') %></a>   
+		<%= render :partial => 'trend_analysis' %>     
+    </div>
+    <div title='View or change your scheduled test(s)' style="position:absolute;left:<%= right_butt %>px;top:<%= row_1 %>px;">        
+		<a class='activate_modal' name='trend_analysis2' href='#'><%= image_tag('/images/ScheduleTestButtonON.jpg') %></a>   
+		<%= render :partial => 'trend_analysis2' %>     
+    </div>
+    <div title='Chat with a practitioner about your selected test(s)' onclick="practitionersClick();" style="position:absolute;left:<%= left_butt %>px;top:<%= row_2 %>px;">
+        <%= image_tag('/images/PractitionersButtonON.jpg') %>
+    </div>
+    <div title='Find out which supplements can help' onclick="supplementsClick();" style="position:absolute;left:<%= right_butt %>px;top:<%= row_2 %>px;">
+        <%= image_tag('/images/SupplementsButtonON.jpg') %>
+    </div>
+    <div title='Learn more about this test' onclick="informationClick();" style="position:absolute;left:<%= left_butt %>px;top:<%= row_3 %>px;">
+        <%= image_tag('/images/InformationButtonON.jpg') %>
+    </div>
+    <div title='Find out which drugs can help' onclick="drugsClick();" style="position:absolute;left:<%= right_butt %>px;top:<%= row_3 %>px;">
+        <%= image_tag('/images/DrugsButtonON.jpg') %>
+    </div>
+    <div title='View all of your tests' onclick="communityClick();" style="position:absolute;left:<%= left_butt %>px;top:<%= row_4 %>px;">
+        <%= image_tag('/images/TestHistoryButtonON.jpg') %>
+    </div>
+    <div title='Compare yourself to others' onclick="cohortComparisonClick();" style="position:absolute;left:<%= right_butt %>px;top:<%= row_4 %>px;">
+        <%= image_tag('/images/CohortCompButtonON.jpg') %>
+    </div>
+    <div title='Save and/or share' onclick="journalClick();" style="position:absolute;left:<%= left_butt %>px;top:<%= row_5 %>px;">
+        <%= image_tag('/images/JournalButtonON.jpg') %>
+    </div>
+    <div title='Discuss what others are doing' onclick="communityClick();" style="position:absolute;left:<%= right_butt %>px;top:<%= row_5 %>px;">
+        <%= image_tag('/images/CommunityButtonON.jpg') %>
+    </div>
+<% else %>
+    <div style="position:absolute;left:180px;top:210px;">
+        <h1>Please Log In</h1>
+        <% form_tag( :action => 'login', :method => :get) do %>
+            <table class="login_table">
+                <tr>
+                    <td class="field_label"><label for="login">Username</label></td>
+                    <td><%= text_field_tag 'login' %></td>
+                </tr>
+                <tr>
+                    <td class="field_label"><label for="password">Password</label></td>
+                    <td><%= password_field_tag 'password' %></td>
+                </tr>
+                <tr>
+                    <td><submit label='Log in'/></td>
+                </tr>
+            </table>
+        <% end %>
+    </div>
+<% end %>
+
+<script>
+
+function toggleTestResultSelected(substance_id)
+{
+	new Ajax.Request('/diagnostic_tracker/toggle_test_result_selected?id=' + substance_id);
+}
+
+function drawGraph() {
+	var dataArray = [];
+
+	var d1 = [];
+	$J.get('/diagnostic_tracker/get_test_result_data', function(response)
+	{
+		var data = eval(response.data);
+		var labels = eval(response.labels);
+		
+		if( data.length == 0 )
+		{
+			alert("You must select at least one test.");
+		}
+		
+	    for (var i = 0; i < data.length; i++)
+	    {
+	        var node = [];
+			var datum = data[i];
+			
+		    for (var j = 0; j < datum.length; j++)
+		    {
+				data_node = datum[j];
+				node.push(data_node);
+			}
+			dataArray.push({label: labels[i], data: node});
+		}
+		var options = {
+		   legend: {
+		     	show: true,
+		labelBoxBorderColor: "#eee",
+			position: "sw",
+			container: $("legend")
+			},
+			xaxis: { mode: "time" }    
+		 }
+
+	  
+	    jQuery.plot($J("#placeholder"), dataArray, options);
+	});
+}
+	
+function trendAnalysisClick()
+{
+	alert("Not yet implemented...");
+}
+
+function scheduleClick()
+{
+	alert("Not yet implemented...");
+}
+
+function practitionersClick()
+{
+	alert("Not yet implemented...");
+}
+
+function cohortComparisonClick()
+{
+	alert("Not yet implemented...");
+}
+
+function informationClick()
+{
+	alert("Not yet implemented...");
+}
+
+function drugsClick()
+{
+	alert("Not yet implemented...");
+}
+
+function supplementsClick()
+{
+	alert("Not yet implemented...");
+}
+
+function communityClick()
+{
+	alert("Not yet implemented...");
+}
+
+function journalClick()
+{
+	alert("Not yet implemented...");
+}
+
+</script>
+

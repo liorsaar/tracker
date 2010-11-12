@@ -1,0 +1,10 @@
+--- 
+users_001: 
+  salt: 5fe7787978bcef0f5e17cc9804a93957d8a0cb5c
+  updated_at: 2009-11-25 15:00:36
+  crypted_password: eaa5a586a1d67a7b86b35a9b51783e090447296e
+  remember_token_expires_at: 
+  username: admin
+  id: "1"
+  remember_token: 
+  created_at: 2009-11-25 15:00:36

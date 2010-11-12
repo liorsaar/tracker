@@ -1,0 +1,25 @@
+<div>
+    <%= error_messages_for('expert', :object => @expert) %>
+	<% semantic_form_for :expert, Expert.new, :url => 'experts' do |form| %>
+		<%= form.inputs %>
+		<%= form.buttons %>
+	<% end %>    
+</div>
+<div>
+	<% expert_counter = 0 -%>
+	<% @experts.each do | expert | -%>
+    	<div>
+        	<span class='image_links'>
+        		<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteExpert('" + expert.id.to_s + "');", {:style => "float:right;"}) %>
+          	</span>
+          	<%= render :partial => 'shared/edit_object_field', :locals => {:object => expert, :field => 'name', :redraw => 'experts', :counter => expert_counter} %>
+      	</div>
+		<% expert_counter += 1 -%>
+  	<% end -%>
+</div>
+<script>
+  function deleteExpert(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_expert?id=' + id);
+  }
+</script>

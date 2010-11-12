@@ -1,0 +1,28 @@
+<h1 style="color:red;">STILL UNDER CONSTRUCTION</h1>
+<div>
+    <%= error_messages_for('category', :object => @category) %>
+    <% remote_form_for :category, :url => {:action => 'create_category'} do |f| -%>
+        <span><strong>Create A New Category</strong></span><br/>
+        <%= f.label :name %><br/>
+        <%= f.text_field :name %><br/>
+        <%= submit_tag 'Add It' -%>
+    <% end -%>
+</div>
+<div>
+	<% category_counter = 0 -%>
+	<% @categories.each do | category | -%>
+    	<div>
+        	<span class='image_links'>
+        		<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteCategory('" + category.id.to_s + "');", {:style => "float:right;"}) %>
+          	</span>
+          	<%= render :partial => 'shared/edit_object_field', :locals => {:object => category, :field => 'name', :redraw => 'categories', :counter => category_counter} %>
+      	</div>
+		<% category_counter += 1 -%>
+  <% end -%>
+</div>
+<script>
+  function deleteCategory(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_category?id=' + id);
+  }
+</script>

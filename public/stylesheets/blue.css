@@ -1,0 +1,84 @@
+blockquote{border-color: #242976;}
+
+h1
+{ background: transparent;
+  color: #242976;
+}
+
+#links_container
+{ 
+ /* background: #242976;
+  color: #FFF;
+  border-top-color: #E2E2E2;
+  border-bottom-color: #6C6C6C;*/
+}
+
+#footer
+{ /*background: #555;
+  color: #FFF;*/
+/*  border-color: white;*/
+  /*border-color: #242976;*/
+}
+
+#links a, #footer a:hover, #logo, #logo h1
+{ background: transparent;
+  color: #FFF;
+}
+
+#links a:hover, #logo h2, #whole_page, #column1, #column2, .sidebaritem, #whole_page  a, #column1 a, #column2 a
+{ background: transparent;
+  color: #666;
+}
+
+#content{background: url(../images/side.png) right repeat-y;}
+
+#menu
+{ /*background: #444 url(../images/menu.png);
+  color: #FFF;
+  border-color: #000;*/
+}
+
+#menu li a
+{ /*background: transparent;
+  color: #E2E2E2;
+  border-color: #6C6C6C;*/
+}
+
+#menu li a:hover, #menu li a#selected, #menu li a#selected:hover, #footer a
+{/* background: #555;
+  color: #182979;*/
+} 
+
+#column1 a, #whole_page a
+{ 
+    font-weight: bold;
+    background: #FFF;
+    color: #000077;
+}
+
+#column1 a:hover, #whole_page a:hover
+{ 
+    font-weight: bold;
+    background: #FFF;
+    color: #182979;
+}
+
+#upper_side
+{
+    background: #A2B282;
+}
+
+#column3
+{ 
+    background: #FF0000;
+}
+
+.sbilinks li a, .sidebaritem a
+{ background: transparent url(../images/arrow.png) no-repeat left center;
+  color: #555;
+} 
+
+.sbilinks li a:hover, .sidebaritem a:hover
+{ background: transparent url(../images/green_arrow.png) no-repeat left center;
+  color: #555;
+} 

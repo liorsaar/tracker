@@ -1,0 +1,40 @@
+<style>
+div.auto_complete {
+  z-index:5;
+  color:#3a3;
+  position:relative;
+}
+
+</style>
+<span style="font-family:'Times New Roman', Times, serif;font-size:175%;color:#3199cb"><%= Date.today.strftime("%B %d, %Y") %></span>
+<% form_remote_tag( :url => { :action => 'view_user_supplement_detail'} ) do %>
+	<div style="text-align:left;position:absolute;top:28px;left:2px;font-family:'Times New Roman', Times, serif;font-size:125%;color:#50a430">Look Up a Supplement by Name:<br/>
+		<br/>
+	<%= text_field_with_auto_complete :supplement, :name, { :size => 30 }, { :url => {:action => 'autocomplete_names'}, :method => :get, :param_name => 'search' } %><br/> 
+	</div>
+	<div style="position:absolute;top:95px;">
+		<%= image_submit_tag('/images/ViewDetail.jpg') %>
+	</div>
+<% end %>
+<div style="position:absolute;top:95px;left:120px;">
+	<%= image_submit_tag('/images/MoveToMyList.jpg', :onclick => "addSupplement();") %>
+</div>
+
+<div style="position:absolute;top:125px;left:2px;color:#4a4238">
+<% if session[:supplement_holder] != nil %>
+	<% supplement = session[:supplement_holder] %>
+	<% if not supplement.brand_name.blank? %>
+		<br/>
+		<strong><%= supplement.brand_name %></strong><br/>
+	<% end %>
+	<%= render :partial => 'show_supplement_details', :locals => {:supplement => supplement} %>
+<% else %>
+<h3>No supplement selected</h3>
+<% end %> 
+</div>
+<script>
+function addSupplement()
+{
+	new Ajax.Request('/supplements/add_user_supplement');
+}
+</script>

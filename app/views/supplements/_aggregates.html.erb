@@ -1,0 +1,106 @@
+<style>
+	table{border-collapse:collapse;text-align: center; width:100%; border-color:#ccc;}
+	td{text-align: center;border: 1px solid #ccc;padding:2px;}
+	th{padding:0 20px;}
+	.over_green{background-color: green; color: black;}
+	.over_yellow{background-color: yellow; color: black;}
+	.over_red{background-color: red; color: black;}
+	.over_black{background-color: black; color: white;}
+	.under_green{background-color: #afa; color: black;}
+	.under_yellow{background-color: #ffa; color: black;}
+	.under_red{background-color: #faa; color: black;}
+	.under_black{background-color: #444; color: white;}
+</style>
+<div style="position:absolute;top:40px;left:0px;width:575px; color:#4a4238;">
+<div style="height:95px; overflow:auto; border:1px solid grey;">
+	<table>
+		<tr>
+			<th>Notes</th><th>Brand Name</th><th>Capsules Per Day</th><th>Delete?</th>
+		</tr>
+		<% @user_supplements.each do | user_supplement | %>
+			<% supplement = Supplement.find(user_supplement.supplement_id) %>
+			<% alerts = Alert.find_all_by_supplement_id(supplement.id) %>
+			<% certifications = Certification.find_all_by_supplement_id(supplement.id) %>
+			<tr>
+				<td>
+					<% @info = Info.find_by_supplement_id(supplement.id) %>
+					<% if @info != nil %>
+						<a class='activate_modal' name="info_window<%= @info.id %>" href='#'><%= image_tag('/images/info.jpg') %></a>
+						<%= render :partial => 'info', :locals => {:info => @info} %>
+					<% end %>
+					<% if alerts.length > 0 %>
+						<a class='activate_modal' name="alerts_window<%= supplement.id %>" href='#'><%= image_tag('/images/warning.jpg') %></a>
+						<%= render :partial => 'alerts', :locals => {:alerts => alerts, :supplement_id => supplement.id} %>
+					<% end %>
+					<% if certifications.length > 0 %>
+						<a class='activate_modal' name="certifications_window<%= supplement.id %>" href='#'><%= image_tag('/images/checkmark.jpg') %></a>
+						<%= render :partial => 'certifications', :locals => {:certifications => certifications, :supplement_id => supplement.id} %>
+					<% end %>
+				</td>
+				<td><%= supplement.brand_name %></td>
+                <td>
+                  <% if supplement.dosage != nil and supplement.doses_per_day != nil -%>
+                    <%= supplement.dosage * supplement.doses_per_day %>
+                  <% end %>
+                </td>
+				<td><%= link_to(image_tag('/images/delete.jpg'), "javascript:deleteUserSupplement('" + user_supplement.id.to_s + "');") %></td>
+			</tr>
+		<% end %>
+	</table>
+</div>
+<div style="height:230px; overflow:auto; border:1px solid grey;">
+	<table>
+		<tr>
+			<th>Nutrient</th><th>My Amount Per Day</th><th>Units</th><th>Lower Limit</th>
+			<% if not session[:expert_id].blank?  %>
+				<th><%= Expert.find(session[:expert_id]).name %></th>
+			<% else %>
+				<th>No Expert Selected</th>
+			<% end %>
+			<th>Upper Limit</th><th>% out</th>
+		</tr>
+		<% subcomponent_counter = 0 %>
+		<% @user_subcomponents.each do | user_subcomponent | %>
+			<% threshold = Threshold.find_by_subcomponent_id_and_expert_id(user_subcomponent.subcomponent_id, session[:expert_id]) %>
+			<% subcomponent = Subcomponent.find(user_subcomponent.subcomponent_id) %>
+			<tr>
+				<td><%= subcomponent.name %></td>
+				<td>
+					<% if threshold != nil and user_subcomponent.percent_out != 0 %>
+						<% if user_subcomponent.percent_out > 50 %>
+							<%= user_subcomponent.total %><%= image_tag('/images/redflag.jpg') %>
+						<% elsif user_subcomponent.percent_out > 25 %>
+							<%= user_subcomponent.total %><%= image_tag('/images/YellowFlag.jpg') %>
+						<% elsif user_subcomponent.percent_out > 0 %>
+							<%= user_subcomponent.total %><%= image_tag('/images/GreenFlag.jpg') %>
+						<% elsif user_subcomponent.percent_out > -25 %>
+							<%= image_tag('/images/GreenFlag.jpg') %><%= user_subcomponent.total %>
+						<% elsif user_subcomponent.percent_out > -50 %>
+							<%= image_tag('/images/YellowFlag.jpg') %><%= user_subcomponent.total %>
+						<% elsif user_subcomponent.percent_out >= -100 %>
+							<%= image_tag('/images/redflag.jpg') %><%= user_subcomponent.total %>
+						<% end %>
+					<% else %>
+						<%= user_subcomponent.total %>
+					<% end %>
+				</td>
+				<% if user_subcomponent.unit_of_measure_id != nil %>
+					<td><%= UnitOfMeasure.find(user_subcomponent.unit_of_measure_id).name %></td>
+				<% end %>
+				<% if threshold != nil %>
+					<td><%= threshold.lower_limit %></td><td><%= threshold.recommended_amount %></td><td><%= threshold.upper_limit %></td><td><%= user_subcomponent.percent_out %></td>
+				<% else %>
+					<td></td><td></td><td></td><td></td>
+				<% end %>
+			</tr>
+			<% subcomponent_counter += 1 %>
+		<% end %>
+	</table>
+</div>
+</div>
+<script>
+	function deleteUserSupplement(id)
+	{
+		new Ajax.Request('/supplements/destroy_user_supplement?id=' + id);
+	}
+</script>

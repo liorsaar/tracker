@@ -1,0 +1,74 @@
+<style>
+#column2
+{ 
+    background: #242986;
+    border-right: white 40px solid;
+  	width: 30%; 
+}
+
+#column2 a
+{
+    font-weight: bold;
+    color: #ccc;
+}
+
+#column2 a:hover
+{
+    font-weight: bold;
+    color: #fff;
+}
+</style>
+<div style="color:#bbb">
+<% if session[:page] != 'user_guide' %>
+<div>
+	<script type="text/javascript">
+		$('column2').style.height = $('column1').offsetHeight;
+	</script>
+</div>
+<% end %>		
+<br/>
+<% if not session[:logged_in] %>
+	<% if session[:page] == 'index' %>
+    		<h3> Registered Users: Login</h3>
+        	<% form_tag( :action => 'login', :method => :get) do %>
+	        	<table class="login_table">
+					<tr>
+	            		<td class="field_label"><label for="login">Username</label></td>
+	            		<td><%= text_field_tag 'login' %></td>
+	          		</tr>
+	          		<tr>
+	            		<td class="field_label"><label for="password">Password</label></td>
+	            		<td><%= password_field_tag 'password' %></td>
+	          		</tr>
+	          		<tr>
+                        <td><%= submit_tag('Log in') %></td>
+                        <!--td><submit label='Log in'/></td-->
+	          		</tr>
+	        	</table>
+        	<% end %>
+	<% end %>
+<% else %>
+	<h3>Logged in as <%= h current_user.login %></h3>
+	<% form_tag :controller => 'front', :action => 'logout' do %>
+		<td><submit label='Log out'/></td>
+	<% end %>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+<% end %>		
+</div>
+

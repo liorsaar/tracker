@@ -1,0 +1,26 @@
+<h1 style="color:red;">STILL UNDER CONSTRUCTION</h1>
+<div>
+    <%= error_messages_for('customer', :object => @customer) %>
+	<% semantic_form_for :customer, Customer.new, :url => 'customers' do |form| %>
+		<%= form.inputs %>	  
+		<%= form.buttons %>
+	<% end %>
+</div>
+<div>
+	<% customer_counter = 0 -%>
+	<% @customers.each do | customer | -%>
+    	<div>
+        	<span class='image_links'>
+        		<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteCustomer('" + customer.id.to_s + "');", {:style => "float:right;"}) %>
+				<%= customer.user.username %>
+          	</span>
+      	</div>
+		<% customer_counter += 1 -%>
+  	<% end -%>
+</div>
+<script>
+  function deleteLab(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_lab?id=' + id);
+  }
+</script>

@@ -1,0 +1,18 @@
+<%= javascript_include_tag("jgcharts.js") %>
+<%= javascript_include_tag("jquery-1.3.2.min.js") %>
+	<div id='trend_analysis' class='modal_window close_modal' style="z-index:5;position:fixed;left:200px;top:200px;width:600px;height:400px;background-color:#bdf">
+
+	<h1>HDL Cholesterol</h1>
+		<div id="line1"></div>
+	</div>
+	<script>
+	
+	$J(document).ready(function(){  
+		var api = new jGCharts.Api(); 
+		jQuery('<img>').attr('src', api.make({ data : [[45.0,39.0],[34.0,39.0],[23.0,39.0],[78.0,39.0]], type : 'lc',
+		axis_labels : ['Feb 2007','Jun 2009','Sep 2009','Dec 2010'],
+		size : '500x350' })).appendTo("#line1");		
+	});
+	</script>
+
+

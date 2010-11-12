@@ -1,0 +1,30 @@
+<h1 style="color:red;">STILL UNDER CONSTRUCTION</h1>
+<div>
+    <%= error_messages_for('lab', :object => @lab) %>
+    <% remote_form_for :lab, :url => {:action => 'create_lab'} do |f| -%>
+        <span><strong>Create A New Lab</strong></span><br/>
+        <%= f.label :name %><br/>
+        <%= f.text_field :name %><br/>
+        <%= render :partial => 'contact_info_fields', :locals => {:fields_object => :contact_info } %>
+        <%= submit_tag 'Add It' -%>
+    <% end -%>
+</div>
+<div>
+	<% lab_counter = 0 -%>
+  	<% @labs.each do | lab | -%>
+		<hr/>    	
+		<div>
+        	<span class='image_links'>
+        		<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteLab('" + lab.id.to_s + "');", {:style => "float:right;"}) %>
+          	</span>
+          	<%= render :partial => 'shared/edit_object_field', :locals => {:object => lab, :field => 'name', :redraw => 'labs', :counter => lab_counter} %>
+      	</div>
+		<% lab_counter += 1 -%>
+	<% end -%>
+</div>
+<script>
+  function deleteLab(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_lab?id=' + id);
+  }
+</script>

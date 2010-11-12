@@ -1,0 +1,29 @@
+<% semantic_form_for :reference_range, ReferenceRange.new, :url => 'reference_ranges' do |form| %>
+	<%= form.inputs %>
+	<%= form.buttons %>
+<% end %>
+<div>
+	<% reference_range_counter = 0 -%>
+	<% @reference_ranges.each do | reference_range | -%>   
+		<div style="margin-top:15px;">
+        	<span class='image_links'>
+        		<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteReferenceRange('" + reference_range.id.to_s + "');", {:style => "float:right;"}) %>
+          	</span>
+          	<% remote_form_for :reference_range, :url => {:action => 'change_reference_range_expert' } do |f| %>
+				Expert:<%= f.select(:expert_id, Expert.find(:all).collect {|e| [ e.name, e.id ] }, {:selected => reference_range.expert_id}) %>
+				<%= f.hidden_field :id, :value => reference_range.id %>
+				<%= submit_tag 'Change Expert', :class => 'savecontract-btn' %>
+			<% end %>	
+          	<%= render :partial => 'shared/edit_object_field', :locals => {:object => reference_range, :field => 'lower_limit', :redraw => 'reference_ranges', :counter => reference_range_counter} %>
+          	<%= render :partial => 'shared/edit_object_field', :locals => {:object => reference_range, :field => 'upper_limit', :redraw => 'reference_ranges', :counter => reference_range_counter} %>
+          	<%= render :partial => 'shared/edit_object_field', :locals => {:object => reference_range, :field => 'reference_amount', :redraw => 'reference_ranges', :counter => reference_range_counter} %>
+      	</div>
+		<% reference_range_counter += 1 -%>
+	<% end -%>
+</div>
+<script>
+  function deleteReferenceRange(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_reference_range?id=' + id);
+  }
+</script>

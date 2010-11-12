@@ -1,0 +1,21 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  lab_report_definition_id: 1
+  customer_id: 1
+  date_time_sample_taken: 2010-09-15 13:22:55
+  date_time_analyzed: 2010-09-15 13:22:55
+  identifier1: MyString
+  indentifier2: MyString
+  identifier3: MyString
+  identifier4: MyString
+
+two:
+  lab_report_definition_id: 1
+  customer_id: 1
+  date_time_sample_taken: 2010-09-15 13:22:55
+  date_time_analyzed: 2010-09-15 13:22:55
+  identifier1: MyString
+  indentifier2: MyString
+  identifier3: MyString
+  identifier4: MyString

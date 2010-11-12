@@ -1,0 +1,28 @@
+<h1 style="color:red;">STILL UNDER CONSTRUCTION</h1>
+<div>
+    <%= error_messages_for('clinician', :object => @clinician) %>
+    <% remote_form_for :clinician, :url => {:action => 'create_clinician'} do |f| -%>
+        <span><strong>Create A New Clinician</strong></span><br/>
+        <%= f.label :name %><br/>
+        <%= f.text_field :name %><br/>
+        <%= render :partial => 'contact_info_fields', :locals => {:fields_object => :contact_info } %>
+        <%= submit_tag 'Add It' -%>
+    <% end -%>
+</div>
+<div>
+	<% clinician_counter = 0 -%>
+	<% @clinicians.each do | clinician | -%>
+    	<hr/>
+		<div>
+        	<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteClinician('" + clinician.id.to_s + "');", {:style => "float:right;"}) %>
+        	<%= render :partial => 'shared/edit_object_field', :locals => {:object => clinician, :field => 'name', :redraw => 'clinicians', :counter => clinician_counter} %>
+      	</div>
+		<% clinician_counter += 1 -%>
+  	<% end -%>
+</div>
+<script>
+  function deleteClinician(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_clinician?id=' + id);
+  }
+</script>

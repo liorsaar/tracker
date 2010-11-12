@@ -1,0 +1,21 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  lab_report_type_id: 1
+  lab_id: 1
+  test_vehicle_id: 1
+  number_of_category_layers: 1
+  number_field_name1: MyString
+  number_field_name2: MyString
+  number_field_name3: MyString
+  number_field_name4: MyString
+
+two:
+  lab_report_type_id: 1
+  lab_id: 1
+  test_vehicle_id: 1
+  number_of_category_layers: 1
+  number_field_name1: MyString
+  number_field_name2: MyString
+  number_field_name3: MyString
+  number_field_name4: MyString

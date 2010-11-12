@@ -1,0 +1,67 @@
+
+  		<h1>Berkeley Training Associates</h1>
+  		<h2>
+  			<div id="testEditor">
+  			<%= button_to 'Remove', 
+				{:action => 'remove_contact_info', 
+				:id => @contact_info.id,
+				:user_id => @user_id},
+				:confirm => 'Are you sure?'
+				 %>
+			</div>
+		</h2>
+
+	    	<h4>			
+				<%= link_to "User", :action => 'show', :id => @user_id %>	
+			</h4>
+			<% form_tag( :action => 'update_contact_info', :id => @contact_info.id, :user_id => @user_id) do %>
+		    	<table>
+					<tr>
+						<td>
+							Send To: <%= text_field_tag( 'contact_info[send_to]', @contact_info.send_to) %>
+						</td>
+					</tr> 
+					<tr>
+						<td>
+							Address: <%= text_field_tag( 'contact_info[address]', @contact_info.address) %>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Address Two: <%= text_field_tag( 'contact_info[address_two]', @contact_info.address_two) %>
+						</td>
+					</tr> 
+					<tr>
+						<td>
+							City: <%= text_field_tag( 'contact_info[city]', @contact_info.city) %>
+						</td>
+					</tr> 
+					<tr>
+						<td>
+							State: <%= text_field_tag( 'contact_info[state]', @contact_info.state) %>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Zip: <%= text_field_tag( 'contact_info[zip]', @contact_info.zip) %>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Phone: <%= text_field_tag( 'contact_info[phone]', @contact_info.phone) %>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Phone Two: <%= text_field_tag( 'contact_info[phone_two]', @contact_info.phone_two) %>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Phone Two: <%= text_field_tag( 'contact_info[phone_three]', @contact_info.phone_three) %>
+						</td>
+					</tr>    
+				</table>
+			<%= submit_tag 'Update'  %>
+			<% end %>
+			<br/>

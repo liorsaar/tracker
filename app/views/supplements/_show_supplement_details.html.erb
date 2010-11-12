@@ -1,0 +1,102 @@
+<style>
+.left_supplement{position:absolute;left:10px;}
+.right_supplement{position:absolute;left:160px;}
+.line1{top:35px;}
+.line2{top:50px;}
+.line3{top:65px;}
+.line4{top:80px;}
+</style>
+<div style="font-size:85%;width:300px;">
+<span class="left_supplement line1">
+	Count Per Bottle: 
+	<% if not supplement.capsules_per_bottle.blank? %>	
+		<%= supplement.capsules_per_bottle %>
+	<% else %>
+		?
+	<% end %>
+</span>
+<span class="right_supplement line1">
+	Dosage: 
+	<% if not supplement.dosage.blank? %>	
+		<%= supplement.dosage %>
+	<% else %>
+		?
+	<% end %>
+</span>
+
+<span class="left_supplement line2">
+	Doses Per Day: 
+	<% if not supplement.doses_per_day.blank? %>	
+		<%= supplement.doses_per_day %>
+	<% else %>
+		?
+	<% end %>
+</span>
+<span class="right_supplement line2">
+	Take With Food: 
+	<% if not supplement.take_with_food.blank? %>	
+		Yes
+	<% else %>
+		?
+	<% end %>
+</span>
+
+<span class="left_supplement line3">
+	Bar Code: 
+	<% if not supplement.bar_code.blank? %>	
+		<%= supplement.bar_code %>
+	<% else %>
+		?
+	<% end %>
+</span>
+<span class="right_supplement line3">
+	Product Code: 
+	<% if not supplement.product_code.blank? %>	
+		<%= supplement.product_code %>
+	<% else %>
+		?
+	<% end %>
+</span>
+
+<span class="left_supplement line4">
+	Note: 
+	<% if not supplement.note.blank? %>	
+		<%= truncate_string( supplement.note, 160)  %>
+	<% else %>
+		none
+	<% end %>
+</span>
+</div>
+
+<div style="position:absolute;top:105px;">
+	<br/> <span><strong>Ingredients:</strong></span>
+	<% ingredients = Ingredient.find_all_by_supplement_id(supplement.id) %>
+	<% limit = 6 %>
+	<% counter = 1 %>
+	<div style="position:absolute;top:33px;height:106px;width:300px;border:1px solid #ccc;">
+		<% ingredients.each do | ingredient | %>
+		  	<div style="margin-left:10px;" class="ingredient">
+				<% if counter < limit %>
+					<% display_text = Subcomponent.find(ingredient.subcomponent_id).name + ": " + ingredient.quantity.to_s + " " + UnitOfMeasure.find(ingredient.unit_of_measure_id).name %>
+					<%= truncate_string( display_text, 40 ) %>	
+					<% if not ingredient.note.blank? %>
+						<br/> Note: <span><%= truncate_string( ingredient.note, 40 ) %></span>
+					<% end %>
+				<% elsif counter == limit %>
+					<a onclick="showCompleteDetails(<%= supplement.id %>);" href='#'>view complete list...</a>
+					<div id='complete_supplement_list' class="containerPlus draggable resizable {buttons:'c', icon:'chart.png', skin:'black', closed:'true', rememberMe:true,containment:'document',width:300,height:300}" style="position:fixed;">
+						<%= render :partial => 'complete_supplement_list', :locals => {:ingredients => ingredients} %>
+					</div>  
+				<% end %>
+			</div>
+			<% counter += 1 %>
+		<% end %>
+	</div>
+</div>
+<script>
+	function showCompleteDetails(supplement_id)
+	{
+		$J('#complete_supplement_list').mb_open();
+		$J('#complete_supplement_list').mb_resizeTo(400,400);
+	}
+</script>

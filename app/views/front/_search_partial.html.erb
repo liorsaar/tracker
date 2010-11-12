@@ -1,0 +1,9 @@
+<table>
+	<% @users.each do | user |%>
+		<tr>
+			<td>
+				<%= link_to user.username, :action => 'show', :controller=> 'users', :id => user.id %>
+			</td>
+		</tr>
+	<% end %>
+</table>

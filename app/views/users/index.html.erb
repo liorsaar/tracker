@@ -1,0 +1,18 @@
+<h1>WellnessFX</h1>
+<h2><div id="testEditor">Users</div></h2>
+
+<%= link_to 'Add User', :action => 'add_user' %>
+<table>
+<% @users.each do | user |%>
+    <tr>
+        <td>
+            <%= link_to user.username, :action => 'show', :id => user.id %>
+        </td>
+        <td>
+            <%= button_to 'remove', :action => 'destroy', :id => user.id %>
+        </td>
+    </tr> 
+<% end %>
+</table>
+<br/>
+

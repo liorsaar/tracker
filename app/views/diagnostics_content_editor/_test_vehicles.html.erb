@@ -1,0 +1,25 @@
+<div>
+    <%= error_messages_for('test_vehicle', :object => @test_vehicle) %>
+	<% semantic_form_for :test_vehicle, TestVehicle.new, :url => 'test_vehicles' do |form| %>
+		<%= form.inputs %>	  
+		<%= form.buttons %>
+	<% end %>
+</div>
+<div>
+	<% test_vehicle_counter = 0 -%>
+	<% @test_vehicles.each do | test_vehicle | -%>
+    	<div>
+        	<span class='image_links'>
+        		<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteTestVehicle('" + test_vehicle.id.to_s + "');", {:style => "float:right;"}) %>
+          	</span>
+          	<%= render :partial => 'shared/edit_object_field', :locals => {:object => test_vehicle, :field => 'name', :redraw => 'test_vehicles', :counter => test_vehicle_counter} %>
+      	</div>
+		<% test_vehicle_counter += 1 -%>
+	<% end -%>
+</div>
+<script>
+  function deleteTestVehicle(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_test_vehicle?id=' + id);
+  }
+</script>

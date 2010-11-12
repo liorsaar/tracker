@@ -1,0 +1,34 @@
+<% semantic_form_for :single_test_result, SingleTestResult.new, :url => 'single_test_results' do |form| %>
+	<%= form.input :single_test_definition, :collection => SingleTestDefinition.find(:all).collect{|std| [std.substance.name + ", " + std.lab.name + ", " + std.test_vehicle.name, std.id] } %>
+	<%= form.input :lab_report, :collection => LabReport.find(:all).map{|lr| [lr.lab_report_definition.report_provider.name + ", " + lr.lab_report_definition.test_vehicle.name + ", " + lr.date_time_sample_taken.strftime("%b %Y"), lr.id]} %>
+	<%= form.input :result_amount %>
+	<%= form.buttons %>
+<% end %>
+<div>
+	<% single_test_result_counter = 0 -%>
+	<% @single_test_results.each do | single_test_result | -%>
+    	<hr/>
+		<div>
+        	<span class='image_links'>
+        		<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteSingleTestResult('" + single_test_result.id.to_s + "');", {:style => "float:right;"}) %>
+          	</span>
+				
+          	<%= render :partial => 'shared/edit_object_field', :locals => {:object => single_test_result, :field => 'result_amount', :redraw => 'single_test_results', :counter => single_test_result_counter} %>
+            <% remote_form_for :single_test_result, :url => {:action => 'change_single_test_definition_for_single_test_result' } do |f| %>
+				<% lr = LabReport.find(single_test_result.lab_report_id) -%>
+				Lab Report:<%= lr.lab_report_definition.report_provider.name + ", " + lr.lab_report_definition.test_vehicle.name + ", " + lr.date_time_sample_taken.strftime("%b %Y") %><br/>
+				
+				Single Test Definition:<%= f.select(:single_test_definition_id, SingleTestDefinition.find(:all).collect {|std| [ std.substance.name, std.id ] }, {:selected => single_test_result.single_test_definition_id}) %>
+  				<%= submit_tag 'Change', :class => 'savecontract-btn' %>
+				<%= f.hidden_field :id, :value => single_test_result.id %>
+			<% end -%>
+      	</div>
+		<% single_test_result_counter += 1 -%>
+	<% end -%>
+</div>
+<script>
+  function deleteSingleTestResult(id)
+  {
+      new Ajax.Request('/diagnostics_content_editor/delete_single_test_result?id=' + id);
+  }
+</script>

@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  test_definition_id: 1
+  reference_amount: 1.5
+  reference_low: 1.5
+  reference_high: 1.5
+  result_amount: 1.5
+
+two:
+  test_definition_id: 1
+  reference_amount: 1.5
+  reference_low: 1.5
+  reference_high: 1.5
+  result_amount: 1.5

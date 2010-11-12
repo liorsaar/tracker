@@ -1,0 +1,14 @@
+<% fields_for fields_object do | contact_info | -%>
+    <%= contact_info.label :phone %><br/>
+    <%= contact_info.text_field :phone %><br/>
+    <%= contact_info.label :address1 %><br/>
+    <%= contact_info.text_field :address1 %><br/>
+    <%= contact_info.label :address2 %><br/>
+    <%= contact_info.text_field :address2 %><br/>
+    <%= contact_info.label :city %><br/>
+    <%= contact_info.text_field :city %><br/>
+    <%= contact_info.label :state %><br/>
+    <%= contact_info.text_field :state %><br/>
+    <%= contact_info.label :zipcode %><br/>
+    <%= contact_info.text_field :zipcode %><br/>
+<% end -%>

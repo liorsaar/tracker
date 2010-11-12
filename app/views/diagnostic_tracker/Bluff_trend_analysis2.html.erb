@@ -1,0 +1,29 @@
+<%= javascript_include_tag("js-class.js") %>
+<%= javascript_include_tag("bluff-src.js") %>
+<%= javascript_include_tag("excanvas.js") %>
+
+<div id='trend_analysis2' class='modal_window close_modal' style="z-index:5;position:fixed;left:200px;top:200px;width:600px;height:400px;background-color:#bdf">
+	<div style='margin:0px 40px 30px 40px;'>
+		<h1>HDL Cholesterol</h1>
+	  <canvas id="example" width="500" height="300"></canvas>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+$J(document).ready(function(){  
+
+  var g = new Bluff.Line('example', '500x300');
+  //g.title = 'HDL Cholesterol';
+  g.tooltips = true;
+  
+  g.theme_37signals();
+  
+  g.data("Test Results", [45, 34, 23, 78]);
+  g.data("Reference Amount", [39, 39, 39, 39]);
+
+  g.labels = {0: 'Feb-2007', 1: 'Jun-2009', 2: 'Sep-2009', 3: 'Dec-2010'};
+  
+  g.draw();
+});
+</script>

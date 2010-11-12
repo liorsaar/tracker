@@ -1,0 +1,38 @@
+
+  		<h1>Berkeley Training Associates</h1>
+  		<h2><div id="testEditor">Users</div></h2>
+
+	    	<h4> <%= link_to 'Users', :action => 'index' %> </h4>	
+	    	<table>
+				<tr>
+					<td>Username:  <%= @user.username %> </td>
+				</tr>
+				<tr> 
+					<td> 
+						<div style="float:left">
+							Permissions:
+						</div>
+						<div>
+							<% @user.permission.each do |permission| %>
+								<%= link_to "permission_#{permission.id}", :controller => 'users', :action => 'show_permission', :id => permission.id, :user_id => @user.id %> 
+							<% end %>
+						</div>
+					</td>
+				</tr>		
+				<% evaluations = Evaluation.find(:all, :conditions => ["user_id = ?", @user.id]) %>
+				<% evaluations.each do | evaluation | %>
+					<div>
+						Product: <%= Product.find(evaluation.product_id).name %>
+					</div>
+					<div>
+						Name on Certificate: <%= evaluation.name_for_certificate %>
+					</div>
+					<div>
+						License Number: <%= evaluation.license_number %>
+					</div>
+				<% end %>
+			</table>
+			<%= link_to 'New Permission', :action => 'show_permission', :user_id => @user.id %>
+			<br/>
+			<%= link_to 'New Contact Info', :action => 'show_contact_info', :user_id => @user.id %>
+			<br/>

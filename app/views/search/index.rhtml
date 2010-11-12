@@ -1,0 +1,24 @@
+<page title="Search" onload="Hobo.doSearch('search_field')">
+  <intro:>
+  	<h1>Berkeley Training Associates</h1>
+  	<h2><div id="testEditor">Search</div></h2>
+  </intro:>
+  <menu_stuff:>
+  		<%= render :text => "" %>
+  </menu_stuff:>
+  <maincol:>
+    <panel class="red">
+    	<div style="margin-top: 40px; margin-left: 20px;">
+		<h2>Search</h2>
+      	<div class='search' style='margin:10px'>
+        	<input type='text' id="search_field" class="search_bhv" style="width: 50%"/>
+			<%= link_to_remote 'Search', :url => {:action => 'do_search', :controller => 'front'}, :with => "'query='+encodeURIComponent($('search_field').value);'" %>
+      		<a href="javascript:alert('yo);">yo</a>
+		</div>
+		<h2>Results</h2>  
+     		<div id="search_results"></div>      
+		</div>
+	</panel>
+	<a href="javascript:alert('yo);">yo</a>
+  </maincol:>
+</page>

@@ -1,0 +1,58 @@
+
+<img src="/images/SupplementTrackerON_03.jpg" style="position:absolute;left:0px;top:0px;" usemap="#map1"/>
+<% if session[:logged_in] %>
+    <div id="user_supplements" style="position:absolute;left:80px;top:210px;">
+        <%= render :partial => 'user_supplements' %>
+    </div>
+    <div style="position:absolute;left:400px;top:210px;">
+        <div style="position:absolute;left:182px;top:0px;width:380px;height:26px;background-color:#e5f2f8;padding:6px;">
+            <% remote_form_for(:expert, :url => {:action => 'change_expert'} ) do  |f| %>
+                <span style="position:absolute;left:10px;top:6px;font-family:'Times New Roman', Times, serif;font-size:150%;color:#3199cb">
+                What do my experts say? </span>
+                <span style="position:absolute;left:210px;top:10px;"><%= f.select(:id, Expert.find(:all).collect {|c| [ c.name, c.id ] }, {:selected => session[:expert_id], :include_blank => 'None'}) %></span>                
+				<span style="position:absolute;left:290px;top:5px;"><%= image_submit_tag '/images/SaveChanges.png' %></span>
+            <% end %>
+        </div>
+        <div id="aggregates" style="height:500px;">
+            <%= render(:partial => 'aggregates') %>
+        </div>
+    </div>
+<% else %>
+    <div style="position:absolute;left:180px;top:210px;">
+        <h1>Please Log In</h1>
+        <% form_tag( :action => 'login', :method => :get) do %>
+            <table class="login_table">
+                <tr>
+                    <td class="field_label"><label for="login">Username</label></td>
+                    <td><%= text_field_tag 'login' %></td>
+                </tr>
+                <tr>
+                    <td class="field_label"><label for="password">Password</label></td>
+                    <td><%= password_field_tag 'password' %></td>
+                </tr>
+                <tr>
+                    <td><submit label='Log in'/></td>
+                </tr>
+            </table>
+        <% end %>
+    </div>
+<% end %>
+
+<script type="text/javascript">
+	function deleteUserSupplement(id)
+	{
+		new Ajax.Request('/supplements/destroy_user_supplement?id=' + id);
+	}
+	
+	$J(document).ready(function(){ 
+      $J(".containerPlus").buildContainers({
+        containment:"document",
+        elementsPath:"elements/",
+        onClose:function(o){},
+        onIconize:function(o){},
+        effectDuration:50
+      });
+
+    });
+</script>
+

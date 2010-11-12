@@ -1,0 +1,16 @@
+10-16 
+Started this change history
+Reduced scriptaculous load size
+Blocked unauthorized access to admin functions
+Implemented a save strings function in MemoryProfiler
+	changed calm down logic to only look at string objects
+Changed some .dryml files to .rhtml to attempt to plug memory leak
+
+10-18
+Changed time limit for vignettes to 2 hours
+
+1-22-08
+Added set_search_columns "username" to models/user
+thereby enabling Stan to search for a user by name
+
+Manually overrode Hobo.hide(spinner), Hobo.show(spinner) in hobo_rapid.doSearch()

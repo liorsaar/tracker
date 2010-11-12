@@ -1,0 +1,9 @@
+<% ingredients.each do | ingredient | %>
+  	<div>
+		<%= Subcomponent.find(ingredient.subcomponent_id).name %>: <%= ingredient.quantity %> <%= UnitOfMeasure.find(ingredient.unit_of_measure_id).name %>	
+		<% if not ingredient.note.blank? %>
+			<br/> Note: <span><%= ingredient.note %></span>
+		<% end %>
+		<hr/>
+	</div>
+<% end %>

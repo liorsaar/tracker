@@ -1,0 +1,21 @@
+<h1>Add a new User</h1>
+<%= error_messages_for :user %>
+
+<% form_tag do %>
+	<p>
+		<label for="login">Username</label><br/>
+		<%= text_field_tag 'username' %><br/>
+	</p>
+	<p>
+		<label for="password">Password</label><br/>
+		<%= password_field_tag 'password' %><br/>
+	</p>
+	<p>
+		<label for="password">Confirm Password</label><br/>
+		<%= password_field_tag 'password_confirmation' %><br/>
+	</p>
+    <p><%= submit_tag 'Add User' %></p>
+<% end %>
+
+
+

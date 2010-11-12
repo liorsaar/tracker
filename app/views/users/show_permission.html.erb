@@ -1,0 +1,36 @@
+
+  		<h1>Berkeley Training Associates</h1>
+  		<h2>
+  			<div id="testEditor"><%= button_to 'Remove', 
+				{:action => 'remove_permission', 
+				:id => @permission.id,
+				:user_id => @user_id},
+				:confirm => 'Are you sure?'
+				%>
+  			</div>
+		</h2>
+
+	    	<h4>			
+				<%= link_to "User", :action => 'show', :id => @user_id %>	
+			</h4>
+			<% form_tag( :action => 'update_permission', :id => @permission.id, :user_id => @user_id) do %>
+		    	<table>
+					<tr>
+						<td>
+							Expires: <%= datetime_select( 'permission', 'expires', :default => @permission.expires )%>
+						</td>
+					</tr> 
+					<tr>
+						<td>
+							User: <%= select('permission', 'user_id', @users.map {|u| [u.username,u.id]}, {:selected => @user_id.to_i}) %>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Product: <%= select('permission', "product_id", @products.map {|u| [u.name,u.id]}) %>
+						</td>
+					</tr>
+				</table>
+			<%= submit_tag 'Update'  %>
+			<% end %>
+			<br/>

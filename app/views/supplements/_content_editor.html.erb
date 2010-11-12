@@ -1,0 +1,484 @@
+<style>
+	#certifiers{background-color:#aac;border:1px solid #333;}
+	#experts{background-color:#bff;border:1px solid #333;}
+	.supplement{border: solid 1px #555;background-color:#eee;color:#444;margin: 2px;padding: 20px;}
+	/*.supplement a{color:#eee;}*/
+	.supplement_name{display:inline;}	
+	.ingredient{border: solid 1px #522;background-color:#caa;color:#633;margin: 2px;padding: 5px;}
+	.ingredient a{color:#caa;}
+	.thresholds{background-color:#aca;}
+	.alerts{background-color:#aa6;border:1px solid #333;}
+	.info{background-color:#ffa;border:1px solid #333;}
+	.certifications{background-color:#aaf;border:1px solid #333;}
+</style>
+<%= javascript_include_tag :defaults %>
+<span class='image_links'>
+    <img src='/images/ofm-radio-btn-on.gif' align="absmiddle"/>	Supplements
+    <%= link_to "<img src='/images/ofm-radio-btn-off.gif' align='absmiddle'/>", :controller => 'diagnostics_content_editor', :action => 'content_editor' %> Diagnostics
+</span>
+
+<div id="content_edit_box" class="content_edit_body">
+	<% if flash[:notice] %>
+		<div class="notice"><%= flash[:notice] %></div>
+	<% end %>
+	<div class="new_supplement">
+		<h1>Supplements Editor</h1>	
+		<%= link_to 'Back to Supplements Main Page', :action => 'index' %>	
+		<div id="newCategoryDiv">
+			<% remote_form_for :supplement, :url => {:action => 'content_editor_create_supplement' } do |f| %>
+				<span>Create A New Supplement</span>
+				Name:<%= f.text_field :brand_name %><br/>
+			   	Count Per Bottle:<%= f.text_field :capsules_per_bottle %><br/>
+			   	Dosage:<%= f.text_field :dosage %><br/>
+			   	Doses Per Day:<%= f.text_field :doses_per_day %><br/>
+			   	Take With Food:<%= f.text_field :take_with_food %><br/>
+			   	Bar Code:<%= f.text_field :bar_code %><br/>
+			   	Product Code:<%= f.text_field :product_code %><br/>
+				Certifier:<%= f.select(:certifier_id, Certifier.find(:all).collect {|c| [ c.name, c.id ] }, {:include_blank => 'None'}) %>
+			   	Note:<%= f.text_field :note %><br/>
+				<%= submit_tag 'Add It' %>
+			<% end %>		
+		</div>
+	</div>
+	<div id="newSubcomponent">
+		<% remote_form_for :subcomponent, :url => {:action => 'content_editor_create_subcomponent' } do |f| %>
+			<span>Create A New Subcomponent</span>
+			<%= submit_tag 'Add It' %>
+			Name:<%= f.text_field :name %><br/>
+		<% end %>
+		<% sub_counter = 0 %>
+		<% @subcomponents.each do | subcomponent | %>
+			<div>
+              <span class='image_links'>
+				<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteSubcomponent('" + subcomponent.id.to_s + "');", {:style => "float:right;"}) %>
+				</span>
+                Name: <span id="edit_subcomponent_name<%= sub_counter.to_s %>" class="subcomponent_name"><%= subcomponent.name %></span>
+				<div id="edit_subcomponent_name_link<%= sub_counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+				<script type="text/javascript">
+				new Ajax.InPlaceEditor("edit_subcomponent_name<%= sub_counter.to_s %>", "/supplements/content_editor_update_subcomponent?id=<%= subcomponent.id %>&field=name", { rows: 1, cols: 40, externalControl: "edit_supplement_name_link<%= sub_counter.to_s %>"});
+				</script>
+			  <span class='image_links'>
+              <% if not subcomponent.expanded > 0 %>
+				<%= link_to(image_tag('/images/grayarrow_rt.gif'), "javascript:expandSubcomponent('" + subcomponent.id.to_s + "');") %>	
+			<% else %>
+				<%= link_to(image_tag('/images/grayarrow_dn.gif'), "javascript:contractSubcomponent('" + subcomponent.id.to_s + "');") %>	
+			  </span>
+            </div>
+			<div class="thresholds">
+				<table>
+					<% thresholds = Threshold.find_all_by_subcomponent_id(subcomponent.id) %>
+					<% if thresholds.length > 0 %>
+						<tr>
+							<th>Expert</th><th>Low</th><th>Rec</th><th>High</th><th>Delete?</th>
+						</tr>
+					<% end %>
+					<% thresholds.each do | threshold | %>
+					<tr>
+						<td><%= Expert.find(threshold.expert_id).name %></td><td><%= threshold.lower_limit %></td><td><%= threshold.recommended_amount %></td><td><%= threshold.upper_limit %></td><td><%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteThreshold('" + threshold.id.to_s + "');", {:style => "float:right;"}) %></td>
+					</tr>
+					<% end %>
+				</table>
+				<% remote_form_for :threshold, :url => {:action => 'content_editor_create_threshold' } do |f| %>
+					<span>Create A New Threshold</span><br/>
+				   	Recommended Amount:<%= f.text_field :recommended_amount %><br/>
+				   	Lower Limit:<%= f.text_field :lower_limit %><br/>
+				   	Upper Limit:<%= f.text_field :upper_limit %><br/>
+					Expert:<%= f.select(:expert_id, Expert.find(:all).collect {|c| [ c.name, c.id ] }, {:include_blank => 'None'}) %>
+					<%= f.select(:unit_of_measure_id, UnitOfMeasure.find(:all).collect {|c| [ c.name, c.id ] }) %>
+					<%= f.hidden_field :subcomponent_id, :value => subcomponent.id %>
+					<%= submit_tag 'Add It' %>
+				<% end %>		
+			</div>
+			<% end %>
+			<% sub_counter += 1 %>
+		<% end %>
+	</div>
+	<div id="certifiers">
+		<% remote_form_for :certifier, :url => {:action => 'content_editor_create_certifier' } do |f| %>
+  			<span>Create A New Certifier</span><br/>
+  			<%= submit_tag 'Add It' %>
+			Name:<%= f.text_field :name %><br/>
+	  	<% end %>
+		<% cert_counter = 0 %>
+		<% @certifiers.each do | certifier | %>
+			<div>
+              <span class='image_links'>
+				<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteCertifier('" + certifier.id.to_s + "');", {:style => "float:right;"}) %>				
+			</span>
+              Name: <span id="edit_certifier_name<%= cert_counter.to_s %>" class="certifier_name"><%= certifier.name %></span>
+				<div id="edit_certifier_name_link<%= cert_counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+				<script type="text/javascript">
+					new Ajax.InPlaceEditor("edit_certifier_name<%= cert_counter.to_s %>", "/supplements/content_editor_update_certifier?id=<%= certifier.id %>&field=name", { rows: 1, cols: 40, externalControl: "edit_certifier_name_link<%= cert_counter.to_s %>"});
+				</script>
+			</div>
+			<% cert_counter += 1 %>
+		<% end %>
+	</div>
+	<div id="experts">
+		<% remote_form_for :expert, :url => {:action => 'content_editor_create_expert' } do |f| %>
+  			<span>Create A New Expert</span>
+  			<%= submit_tag 'Add It' %>
+			Name:<%= f.text_field :name %><br/>
+	  	<% end %>
+		<% exp_counter = 0 %>
+		<% @experts.each do | expert | %>
+			<div>
+				<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteExpert('" + expert.id.to_s + "');", {:style => "float:right;"}) %>				
+                <%= render :partial => 'edit_object_field', :locals => {:object => expert, :field => 'name', :counter => exp_counter} -%>
+			</div>
+			<% exp_counter += 1 %>
+		<% end %>
+	</div>
+	<% counter = 0 %>
+	<% @supplements.each do | supplement | %>
+		<div class="supplement">		
+			<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:confirmSupplementDelete('" + supplement.id.to_s + "');", {:style => "float:right;"}) %>
+            <%= render :partial => 'edit_object_field', :locals => {:object => supplement, :field => 'brand_name', :counter => counter} -%>
+			<% if not supplement.expanded > 0 %>
+				<%= link_to(image_tag('/images/grayarrow_rt.gif'), "javascript:expandSupplement('" + supplement.id.to_s + "');") %>	
+			<% else %>
+				<%= link_to(image_tag('/images/grayarrow_dn.gif'), "javascript:contractSupplement('" + supplement.id.to_s + "');") %>	
+				
+				<div class="certifications">
+				<% remote_form_for :certification, :url => {:action => 'content_editor_create_certification' } do |f| %>
+					New Certifier:<%= f.select(:certifier_id, Certifier.find(:all).collect {|c| [ c.name, c.id ] }, {:include_blank => 'None'}) %>
+		  			<%= submit_tag 'Add New Certifier', :class => 'savecontract-btn' %>
+					<%= f.hidden_field :supplement_id, :value => supplement.id %>
+			  	<% end %>
+				Certifications:<br/>
+				<% certification_counter = 0 %>
+				<% certifications = Certification.find_all_by_supplement_id(supplement.id) %>
+				<% certifications.each do | certification | %>
+					  <span class='image_links'>
+                      <%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteCertification('" + certification.id.to_s + "');", {:style => "float:right;"}) %>
+					    </span>
+                        <% remote_form_for :certification, :url => {:action => 'content_editor_change_certification' } do |f| %>
+						Certifier:<%= f.select(:certifier_id, Certifier.find(:all).collect {|c| [ c.name, c.id ] }, {:selected => certification.certifier_id, :include_blank => 'None'}) %>
+			  			<%= submit_tag 'Change Certifier', :class => 'savecontract-btn' %>
+						<%= f.hidden_field :supplement_id, :value => supplement.id %>
+						<%= f.hidden_field :id, :value => certification.id %>
+				  	<% end %>
+					
+					<% certification_counter += 1 %>
+				<% end %>
+				</div>
+				
+				<div class="alerts">
+					<% remote_form_for :alert, :url => {:action => 'content_editor_add_alert' } do |f| %>
+						New Alert: <%= f.text_field :message, :size => 150 %>
+			  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %>
+						<%= f.hidden_field :supplement_id, :value => supplement.id %>
+				  	<% end %>
+					Alerts:<br/>
+					<% alert_counter = 0 %>
+					<% alerts = Alert.find_all_by_supplement_id(supplement.id) %>
+					<% alerts.each do | alert | %>
+                      <div>
+						<span class='image_links'>
+                        <%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteAlert('" + alert.id.to_s + "');", {:style => "float:right;"}) %>
+                          </span>
+                          <%= render :partial => 'edit_object_field', :locals => {:object => alert, :field => 'message', :counter => alert_counter} -%>
+						<% alert_counter += 1 %>
+                      </div>
+					<% end %>
+				</div>
+				
+				<div class="infos">
+					<%= error_messages_for('info', :object => @info) %>
+					<% info = Info.find_by_supplement_id(supplement.id) %>
+					<% if info == nil %>
+						<% remote_form_for :info, :url => {:action => 'content_editor_add_info' } do |f| %>
+							Info: <br/>
+							Paragraph 1: <%= f.text_field :paragraph1, :size => 150 %>
+							Paragraph 2: <%= f.text_field :paragraph2, :size => 150 %>
+							Paragraph 3: <%= f.text_field :paragraph3, :size => 150 %>
+							Paragraph 4: <%= f.text_field :paragraph4, :size => 150 %>
+				  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %>
+							<%= f.hidden_field :supplement_id, :value => supplement.id %>
+					  	<% end %>
+					<% else %>
+						Info:<br/>
+						<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteInfo('" + info.id.to_s + "');", {:style => "float:right;"}) %>
+						Paragraph 1: <span id="edit_paragraph1" class="info"><%= info.paragraph1 %></span>
+						<div id="edit_paragraph1_link" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+						<script type="text/javascript">
+							new Ajax.InPlaceEditor("edit_paragraph1", "/supplements/content_editor_update_paragraph1?id=<%= info.id %>", { rows: 1, cols: 40, externalControl: "edit_paragraph1_link"});
+						</script>
+						Paragraph 2: <span id="edit_paragraph2" class="info"><%= info.paragraph2 %></span>
+						<div id="edit_paragraph1_link" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+						<script type="text/javascript">
+							new Ajax.InPlaceEditor("edit_paragraph2", "/supplements/content_editor_update_paragraph2?id=<%= info.id %>", { rows: 1, cols: 40, externalControl: "edit_paragraph2_link"});
+						</script>
+						Paragraph 3: <span id="edit_paragraph3" class="info"><%= info.paragraph3 %></span>
+						<div id="edit_paragraph1_link" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+						<script type="text/javascript">
+							new Ajax.InPlaceEditor("edit_paragraph3", "/supplements/content_editor_update_paragraph3?id=<%= info.id %>", { rows: 1, cols: 40, externalControl: "edit_paragraph3_link"});
+						</script>
+						Paragraph 4: <span id="edit_paragraph4" class="info"><%= info.paragraph4 %></span>
+						<div id="edit_paragraph1_link" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+						<script type="text/javascript">
+							new Ajax.InPlaceEditor("edit_paragraph4", "/supplements/content_editor_update_paragraph4?id=<%= info.id %>", { rows: 1, cols: 40, externalControl: "edit_paragraph4_link"});
+						</script>
+					<% end %>
+				</div>
+				
+			<% if supplement.capsules_per_bottle.blank? %>
+				<% remote_form_for :supplement, :url => {:action => 'content_editor_update_supplement_field' } do |f| %>
+		  			<span>Count Per Bottle:</span>
+		  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %><%= f.text_field :capsules_per_bottle  %>
+					<%= f.hidden_field :id, :value => supplement.id %>
+					<%= f.hidden_field :field, :value => 'capsules_per_bottle' %>
+			  	<% end %>
+			<% else %>
+				<br/>
+				Count Per Bottle:
+				<span id="edit_capsules_per_bottle<%= counter.to_s %>"><%= supplement.capsules_per_bottle %></span>
+				<div id="edit_capsules_per_bottle_link<%= counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+				<script type="text/javascript">
+					new Ajax.InPlaceEditor("edit_capsules_per_bottle<%= counter.to_s %>", "/supplements/content_editor_update_supplement?id=<%= supplement.id %>&field=capsules_per_bottle", { externalControl: "edit_capsules_per_bottle_link<%= counter.to_s %>"});
+				</script>
+			<% end %>
+
+			<% if supplement.dosage.blank? %>
+				<% remote_form_for :supplement, :url => {:action => 'content_editor_update_supplement_field' } do |f| %>
+		  			<span>Dosage:</span>
+		  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %><%= f.text_field :dosage  %>
+					<%= f.hidden_field :id, :value => supplement.id %>
+					<%= f.hidden_field :field, :value => 'dosage' %>
+			  	<% end %>
+			<% else %>
+				<br/>
+				Dosage:
+				<span id="edit_dosage<%= counter.to_s %>"><%= supplement.dosage %></span>
+				<div id="edit_dosage_link<%= counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+				<script type="text/javascript">
+					new Ajax.InPlaceEditor("edit_dosage<%= counter.to_s %>", "/supplements/content_editor_update_supplement?id=<%= supplement.id %>&field=dosage", { externalControl: "edit_dosage_link<%= counter.to_s %>"});
+				</script>
+			<% end %>
+
+			<% if supplement.doses_per_day.blank? %>
+				<% remote_form_for :supplement, :url => {:action => 'content_editor_update_supplement_field' } do |f| %>
+		  			<span>Doses Per Day:</span>
+		  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %><%= f.text_field :doses_per_day  %>
+					<%= f.hidden_field :id, :value => supplement.id %>
+					<%= f.hidden_field :field, :value => 'doses_per_day' %>
+			  	<% end %>
+			<% else %>
+				<br/>
+				Doses Per Day:
+				<span id="edit_doses_per_day<%= counter.to_s %>"><%= supplement.doses_per_day %></span>
+				<div id="edit_doses_per_day_link<%= counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+				<script type="text/javascript">
+					new Ajax.InPlaceEditor("edit_doses_per_day<%= counter.to_s %>", "/supplements/content_editor_update_supplement?id=<%= supplement.id %>&field=doses_per_day", { externalControl: "edit_doses_per_day_link<%= counter.to_s %>"});
+				</script>
+			<% end %>
+			
+			<% if supplement.take_with_food.blank? %>
+				<% remote_form_for :supplement, :url => {:action => 'content_editor_update_supplement_field' } do |f| %>
+		  			<span>Take With Food:</span>
+		  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %><%= f.text_field :take_with_food  %>
+					<%= f.hidden_field :id, :value => supplement.id %>
+					<%= f.hidden_field :field, :value => 'take_with_food' %>
+			  	<% end %>
+			<% else %>
+				<br/>
+				Take With Food:
+				<span id="edit_take_with_food<%= counter.to_s %>"><%= supplement.take_with_food %></span>
+				<div id="edit_take_with_food_link<%= counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+				<script type="text/javascript">
+					new Ajax.InPlaceEditor("edit_take_with_food<%= counter.to_s %>", "/supplements/content_editor_update_supplement?id=<%= supplement.id %>&field=take_with_food", { externalControl: "edit_take_with_food_link<%= counter.to_s %>"});
+				</script>
+			<% end %>
+			
+			<% if supplement.bar_code.blank? %>
+				<% remote_form_for :supplement, :url => {:action => 'content_editor_update_supplement_field' } do |f| %>
+		  			<span>Bar Code:</span>
+		  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %><%= f.text_field :bar_code  %>
+					<%= f.hidden_field :id, :value => supplement.id %>
+					<%= f.hidden_field :field, :value => 'bar_code' %>
+			  	<% end %>
+			<% else %>
+				<br/>
+				Bar Code:
+				<span id="edit_bar_code<%= counter.to_s %>"><%= supplement.bar_code %></span>
+				<div id="edit_bar_code_link<%= counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+				<script type="text/javascript">
+					new Ajax.InPlaceEditor("edit_bar_code<%= counter.to_s %>", "/supplements/content_editor_update_supplement?id=<%= supplement.id %>&field=bar_code", { externalControl: "edit_bar_code_link<%= counter.to_s %>"});
+				</script>
+			<% end %>
+			
+			<% if supplement.product_code.blank? %>
+				<% remote_form_for :supplement, :url => {:action => 'content_editor_update_supplement_field' } do |f| %>
+		  			<span>Product Code:</span>
+		  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %><%= f.text_field :product_code  %>
+					<%= f.hidden_field :id, :value => supplement.id %>
+					<%= f.hidden_field :field, :value => 'product_code' %>
+			  	<% end %>
+			<% else %>
+				<br/>
+				Product Code:
+				<span id="edit_product_code<%= counter.to_s %>"><%= supplement.product_code %></span>
+				<div id="edit_product_code_link<%= counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+				<script type="text/javascript">
+					new Ajax.InPlaceEditor("edit_product_code<%= counter.to_s %>", "/supplements/content_editor_update_supplement?id=<%= supplement.id %>&field=product_code", { externalControl: "edit_product_code_link<%= counter.to_s %>"});
+				</script>
+			<% end %>
+			
+			<% if supplement.note.blank? %>
+				<% remote_form_for :supplement, :url => {:action => 'content_editor_update_supplement_field' } do |f| %>
+		  			<span>Note:</span>
+		  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %><%= f.text_field :note  %>
+					<%= f.hidden_field :id, :value => supplement.id %>
+					<%= f.hidden_field :field, :value => 'note' %>
+			  	<% end %>
+			<% else %>
+				<br/>
+				Note:
+				<span id="edit_note<%= counter.to_s %>"><%= supplement.note %></span>
+				<div id="edit_note_link<%= counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+				<script type="text/javascript">
+					new Ajax.InPlaceEditor("edit_note<%= counter.to_s %>", "/supplements/content_editor_update_supplement?id=<%= supplement.id %>&field=note", { externalControl: "edit_note_link<%= counter.to_s %>"});
+				</script>
+			<% end %>
+			
+			<div id="newIngredient">
+			  <% remote_form_for :ingredient, :url => {:action => 'content_editor_create_ingredient' } do |f| %>
+		  		<span>Create A New Ingredient</span>
+				<%= f.hidden_field :supplement_id, :value => supplement.id %>
+				Quantity:<%= f.text_field :quantity %><br/>
+				<%= f.select(:unit_of_measure_id, UnitOfMeasure.find(:all).collect {|c| [ c.name, c.id ] }) %>
+				<%= f.select(:subcomponent_id, Subcomponent.find(:all).collect {|c| [ c.name, c.id ] }) %>
+		  		<%= submit_tag 'Add It' %>
+			  <% end %>
+			</div>
+			<% ingredient_counter = 0 %>
+			<% ingredients = Ingredient.find_all_by_supplement_id(supplement.id) %>
+			<% ingredients.each do | ingredient | %>
+			  	<div class="ingredient">
+					<%= link_to(image_tag('/images/delete-icon-transparent.png'), "javascript:deleteIngredient('" + ingredient.id.to_s + "');", {:style => "float:right;"}) %>
+					<% remote_form_for ingredient, :url => {:action => 'content_editor_change_ingredient_subcomponent' } do |f| %>
+						<%= f.select(:subcomponent_id, Subcomponent.find(:all).collect {|c| [ c.name, c.id ] }) %>
+						<%= f.hidden_field :id, :value => ingredient.id %>
+						<%= submit_tag 'Save Change' %>
+					<% end %>
+					<% remote_form_for ingredient, :url => {:action => 'content_editor_change_ingredient_uom' } do |f| %>
+						<%= f.select(:unit_of_measure_id, UnitOfMeasure.find(:all).collect {|c| [ c.name, c.id ] }) %>
+						<%= f.hidden_field :id, :value => ingredient.id %>
+						<%= submit_tag 'Save Change' %>
+					<% end %>					
+					
+					<% if ingredient.quantity.blank? %>
+						<% remote_form_for :ingredient, :url => {:action => 'content_editor_update_ingredient_field' } do |f| %>
+				  			<span>Quantity:</span>
+				  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %><%= f.text_field :quantity  %>
+							<%= f.hidden_field :id, :value => ingredient.id %>
+							<%= f.hidden_field :field, :value => 'quantity' %>
+					  	<% end %>
+					<% else %>
+						<br/>
+						Quantity:
+						<span id="edit_ingredient_quantity<%= counter.to_s %>_<%= ingredient_counter.to_s %>"><%= ingredient.quantity %></span>
+						<div id="edit_ingredient_quantity_link<%= counter.to_s %>_<%= ingredient_counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+						<script type="text/javascript">
+							new Ajax.InPlaceEditor("edit_ingredient_quantity<%= counter.to_s %>_<%= ingredient_counter.to_s %>", "/supplements/content_editor_update_ingredient?id=<%= ingredient.id %>&field=quantity", { externalControl: "edit_ingredient_quantity_link<%= counter.to_s %>_<%= ingredient_counter.to_s %>"});
+						</script>
+					<% end %>
+
+					<% if ingredient.note.blank? %>
+						<% remote_form_for :ingredient, :url => {:action => 'content_editor_update_ingredient_field' } do |f| %>
+				  			<span>Note:</span>
+				  			<%= submit_tag 'Add It', :class => 'savecontract-btn' %><%= f.text_field :note  %>
+							<%= f.hidden_field :id, :value => ingredient.id %>
+							<%= f.hidden_field :field, :value => 'note' %>
+					  	<% end %>
+					<% else %>
+						<br/>
+						Note:
+						<span id="edit_ingredient_note<%= counter.to_s %>_<%= ingredient_counter.to_s %>"><%= ingredient.note %></span>
+						<div id="edit_ingredient_note_link<%= counter.to_s %>_<%= ingredient_counter.to_s %>" style="display:inline;color:orange;"><%= image_tag('/images/edit-icon-transparent.png') %></div>
+						<script type="text/javascript">
+							new Ajax.InPlaceEditor("edit_ingredient_note<%= counter.to_s %>_<%= ingredient_counter.to_s %>", "/supplements/content_editor_update_ingredient?id=<%= ingredient.id %>&field=note", { externalControl: "edit_ingredient_note_link<%= counter.to_s %>_<%= ingredient_counter.to_s %>"});
+						</script>
+					<% end %>
+
+				</div>
+				<% ingredient_counter += 1 %>
+			<% end %>
+		  	<% end %>
+
+		</div><!-- end supplement -->
+		<% counter += 1 %>
+	<% end %> <!-- end @supplement.each do -->					
+
+</div>
+
+<script>
+	function confirmSupplementDelete(id)
+	{
+		if(confirm('Sure you want to delete this?'))
+		{
+			deleteSupplement(id);
+		}
+	}
+
+	function deleteIngredient(id)
+	{
+		new Ajax.Request('/supplements/content_editor_destroy_ingredient?id=' + id);
+	}
+	
+	function deleteSupplement(id)
+	{
+		new Ajax.Request('/supplements/content_editor_destroy_supplement?id=' + id);
+	}
+
+	function deleteSubcomponent(id)
+	{
+		new Ajax.Request('/supplements/content_editor_destroy_subcomponent?id=' + id);
+	}
+
+	function deleteCertifier(id)
+	{
+		new Ajax.Request('/supplements/content_editor_destroy_certifier?id=' + id);
+	}
+
+	function deleteExpert(id)
+	{
+		new Ajax.Request('/supplements/content_editor_destroy_expert?id=' + id);
+	}
+
+	function deleteThreshold(id)
+	{
+		new Ajax.Request('/supplements/content_editor_destroy_threshold?id=' + id);
+	}
+	
+	function expandSubcomponent(id)
+	{
+		new Ajax.Request('/supplements/content_editor_expand_subcomponent?id=' + id);
+	}
+	
+	function contractSubcomponent(id)
+	{
+		new Ajax.Request('/supplements/content_editor_contract_subcomponent?id=' + id);
+	}
+	
+	function expandSupplement(id)
+	{
+		new Ajax.Request('/supplements/content_editor_expand_supplement?id=' + id);
+	}
+	
+	function contractSupplement(id)
+	{
+		new Ajax.Request('/supplements/content_editor_contract_supplement?id=' + id);
+	}	
+		
+	function deleteInfo(id)
+	{
+		new Ajax.Request('/supplements/content_editor_destroy_info?id=' + id);
+	}
+	
+	function deleteCertification(id)
+	{
+		new Ajax.Request('/supplements/content_editor_destroy_certification?id=' + id);
+	}
+		
+</script>
